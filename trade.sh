@@ -1,1 +1,1 @@
-node trader.js
+node stockbots.js train
