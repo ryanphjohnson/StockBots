@@ -24,20 +24,29 @@ BgMagenta = "\x1b[45m",
 BgCyan = "\x1b[46m",
 BgWhite = "\x1b[47m";
 
-function Print () {
+function Print () 
+{
 	console.log ('Super Cool Stats about ' + GoodNews ('$$$$') + ' and ' + BadNews ('Performance') + Reset);
 }
 
-function GoodNews (str) {
+function GoodNews (str) 
+{
 	return FgGreen + str + Reset;
 }
 
-function BadNews (str) {
+function BadNews (str) 
+{
 	return FgRed + str + Reset;
+}
+
+function Status () 
+{
+	return "Test Status";
 }
 
 module.exports = {
 	Print: Print,
+	Status: Status,
 	GoodNews: GoodNews,
 	BadNews: BadNews
 }

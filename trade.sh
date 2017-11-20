@@ -1,1 +1,1 @@
-node stockbots.js train
+node stockbots.js $1

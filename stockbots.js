@@ -1,42 +1,24 @@
 // Rough draft of stock trading engine
-//
-// Check what mode we'll be running in
-// 	We'll need 3 modes: Train, Test, and Prod
-var MODELIST = {'train': 0, 'test': 1, 'prod': 2}; // List of running modes. If for some stupid reason you think you need another message you'll have to update this
-var MODE = GetMode (MODELIST); // What mode to run in
-var ai = {}; // MyHero ? MyHero : MyEnemy
-var twit = {}; // Hopefully a reliable source of information... let that sink in
-var stats = {}; // Evidence for the authorities
-var stocks = {}; // List of all the stocks we're watching
-var timeLord = {}; // God of time and torture, killer of men and finances. Not to be triffled with
-//
-// All modes will need twitter sentiment and list of twitter users and print stats
-ai = require ('./utils/ai.js');
-twit = require ('./utils/twitter.js');
-stats = require ('./utils/stats.js');
-stocks = require ('./utils/stocks.js');
-//
-// Include correct libraries depending on what mode we're running in
-// 	There should be 2 versions of GetRelevantStocks, GetAIAction, Wait
-// 	There should be 3 versions of GetCurrentStocks, TakeAIAction
-switch (MODE) {
-	case 'train':
-		stocks.all = require ('./train/stocks-all.js');
-		stocks.current = require ('./train/stocks-current.js');
-		ai.get = require ('./train/action-get.js');
-		ai.take = require ('./train/action-take.js');
-		timeLord = require ('./train/wait.js');
-		break;
-	case 'test':
 
-		break;
-	case 'prod':
+var envs = require ('./config.json').environments;
+var ai = require ('./utils/ai.js'); // MyHero ? MyHero : MyEnemy
+var twit = require ('./utils/twitter.js'); // Hopefully a reliable source of information... let that sink in
+var stats = require ('./utils/stats.js'); // Evidence for the authorities
+var stocks = require ('./utils/stocks.js'); // List of all the stocks we're watching
+var timelord = {}; // God of time and torture, killer of men and finances. Not to be triffled with
+var mode = GetMode (envs); // What mode to run in
+var conf = envs [mode];
+var cont = true;
+var debug;
 
-		break;
-}
-//
+stocks.all = require (conf.stocks.all);
+stocks.current = require (conf.stocks.current);
+ai.get = require (conf.ai.get);
+ai.take = require (conf.ai.take);
+timelord = require (conf.timelord);
+
 // Main Loop
-//
+while (cont) {
 // 	Get Latest Tweets
 	twit.GetTweets();
 // 	Get stocks
@@ -46,15 +28,22 @@ switch (MODE) {
 // 	Print Stats
 	stats.Print ();
 // 	Check if we need to exit loop
-	console.log ('Check exit condition');
+	cont = Status();
 // 	Wait
-	timeLord.wait();
+	if (cont)
+		timelord.wait();
+//	DEBUG
+	if (debug)
+		console.log (debug);
+}
 
-function GetMode (modeList) {
+// Check what mode we'll be running in
+function GetMode (modes) 
+{
 	var mode = '';
 
 	for (arg in process.argv) {
-		if (process.argv [arg] in modeList)
+		if (process.argv [arg] in modes)
 			mode = process.argv [arg];
 	}
 	if (!mode)
@@ -62,4 +51,10 @@ function GetMode (modeList) {
 
 	console.log ('Trading in ' + require ('./utils/stats.js').GoodNews (mode.toUpperCase()) + ' mode');
 	return mode;
+}
+
+function Status () 
+{
+	console.log ('Check exit condition');
+	return false;
 }

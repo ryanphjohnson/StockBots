@@ -1,0 +1,17 @@
+{
+	"environments" : {
+		"train" : {
+			"stocks" : {
+				"all" : "./train/stocks-all.js",
+				"current" : "./train/stocks-current.js"
+			},
+			"ai" : {
+				"get" : "./train/action-get.js",
+				"take" : "./train/action-take.js"
+			},
+			"timelord" : "./train/wait.js"
+		},
+		"test" : {},
+		"prod" : {}
+	}
+}
