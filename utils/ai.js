@@ -2,6 +2,7 @@
 this.get = {GetAIAction: NotConfigured};
 this.take = {TakeAIAction: NotConfigured};
 
+/** Look at the config.json file to see which Get/TakeAIAction is being called **/
 function Go() {
 	this.get.GetAIAction();
 	this.take.TakeAIAction();

@@ -1,15 +1,15 @@
 // Rough draft of stock trading engine
 
-var envs = require ('./config.json').environments;
-var ai = require ('./utils/ai.js'); // MyHero ? MyHero : MyEnemy
-var twit = require ('./utils/twitter.js'); // Hopefully a reliable source of information... let that sink in
-var stats = require ('./utils/stats.js'); // Evidence for the authorities
-var stocks = require ('./utils/stocks.js'); // List of all the stocks we're watching
-var timelord = {}; // God of time and torture, killer of men and finances. Not to be triffled with
-var mode = GetMode (envs); // What mode to run in
-var conf = envs [mode];
-var cont = true;
-var debug;
+var envs = require ('./config.json').environments,
+ai = require ('./utils/ai.js'), // MyHero ? MyHero : MyEnemy
+twit = require ('./utils/twitter.js'), // Hopefully a reliable source of information... let that sink in
+stats = require ('./utils/stats.js'), // Evidence for the authorities
+stocks = require ('./utils/stocks.js'), // List of all the stocks we're watching
+timelord = {}, // God of time and torture, killer of men and finances. Not to be triffled with
+mode = GetMode (envs), // What mode to run in
+conf = envs [mode],
+cont = true,
+debug;
 
 stocks.all = require (conf.stocks.all);
 stocks.current = require (conf.stocks.current);
@@ -24,7 +24,7 @@ while (cont) {
 // 	Get stocks
 	stocks.GetStocks();
 // 	Magic
-	ai.Go();
+	ai.Go (stocks);
 // 	Print Stats
 	stats.Print ();
 // 	Check if we need to exit loop

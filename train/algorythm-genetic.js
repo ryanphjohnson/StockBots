@@ -1,6 +1,9 @@
 function GetAction (stocks)
 {
-	
+	console.log ("Getting Genetic Acctions");
+	//Loop over Chromosomes and pass in stocks
+	//build up list of actions
+	//return actions
 }
 // This will help us prevent losing money
 // We want to make sure that any action taken prevents us from losing money
