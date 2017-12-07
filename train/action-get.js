@@ -3,13 +3,18 @@ function GetAIAction (stocks)
 	console.log ('TRAIN: Getting AI Action');
 	var genetics = require ("./algorythm-genetic.js"),
 	bayes = require ("./algorythm-bayesian-belief.js"),
-	nn = require ("./algorythm-neural-network.js");
+	nn = require ("./algorythm-neural-network.js"),
+	actions = [],
+	ga = [],
+	ba = [],
+	na = [];
 
-	genetics.GetAction (stocks);
-	bayes.GetAction (stocks);
-	nn.GetAction (stocks);
+	ga = genetics.GetAction (stocks);
+	ba = bayes.GetAction (stocks);
+	na = nn.GetAction (stocks);
+	actions = ga.concat (ba).concat (nn);
 
-	return;
+	return actions;
 }
 
 module.exports = {

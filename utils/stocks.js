@@ -1,6 +1,12 @@
 this.all = {GetAllStocks: NotConfigured};
 this.current = {GetCurrentStocks: NotConfigured};
 
+function Init (config)
+{
+	this.all = require ("../" + config.stocks.all);
+	this.current = require ("../" + config.stocks.current);
+}
+
 function GetStocks()
 {
 	this.all.GetAllStocks();
@@ -25,7 +31,6 @@ function Transaction ()
 }
 
 module.exports = {
-	GetStocks: GetStocks,
-	all: this.all,
-	current: this.current
+	Init: Init,
+	GetStocks: GetStocks
 }

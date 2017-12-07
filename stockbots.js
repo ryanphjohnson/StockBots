@@ -1,21 +1,18 @@
 // Rough draft of stock trading engine
 
 var envs = require ('./config.json').environments,
+mode = GetMode (envs), // What mode to run in
+config = envs [mode],
 ai = require ('./utils/ai.js'), // MyHero ? MyHero : MyEnemy
 twit = require ('./utils/twitter.js'), // Hopefully a reliable source of information... let that sink in
 stats = require ('./utils/stats.js'), // Evidence for the authorities
 stocks = require ('./utils/stocks.js'), // List of all the stocks we're watching
-timelord = {}, // God of time and torture, killer of men and finances. Not to be triffled with
-mode = GetMode (envs), // What mode to run in
-conf = envs [mode],
+timelord = require (config.timelord), // God of time and torture, killer of men and finances. Not to be triffled with
 cont = true,
 debug;
 
-stocks.all = require (conf.stocks.all);
-stocks.current = require (conf.stocks.current);
-ai.get = require (conf.ai.get);
-ai.take = require (conf.ai.take);
-timelord = require (conf.timelord);
+stocks.Init (config);
+ai.Init (config);
 
 // Main Loop
 while (cont) {
@@ -38,7 +35,7 @@ while (cont) {
 }
 
 // Check what mode we'll be running in
-function GetMode (modes) 
+function GetMode (modes)
 {
 	var mode = '';
 
@@ -53,7 +50,7 @@ function GetMode (modes)
 	return mode;
 }
 
-function Status () 
+function Status ()
 {
 	console.log ('Check exit condition');
 	return false;
