@@ -1,3 +1,14 @@
+var genetics = require ("./algorythm-genetic.js"),
+bayes = require ("./algorythm-bayesian-belief.js"),
+nn = require ("./algorythm-neural-network.js");
+
+function Init (config)
+{
+	genetics.Init (config);
+	bayes.Init (config);
+	nn.Init (config);
+}
+
 function GetAIAction (stocks) 
 {
 	console.log ('TRAIN: Getting AI Action');
@@ -18,5 +29,6 @@ function GetAIAction (stocks)
 }
 
 module.exports = {
+	Init: Init,
 	GetAIAction: GetAIAction
 }

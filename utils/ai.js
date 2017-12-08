@@ -7,6 +7,7 @@ function Init (config)
 {
 	this.get = require ("../" + config.ai.get);
 	this.take = require ("../" + config.ai.take);
+	this.get.Init (config);
 }
 
 function Go()
@@ -29,6 +30,7 @@ function Action()
 }
 
 module.exports = {
+	Action: Action,
 	Init: Init,
 	Go: Go
 }

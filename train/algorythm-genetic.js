@@ -1,22 +1,27 @@
 var chromosomePopulation = 1,
-genePopulation = 1000,
+genePopulation = 10,
 genes = [],
-chromosomes = [];
+chromosomes = []
+ai = require ("../utils/ai.js");
 
 function Init()
 {
 	//Create Chromosomes
+	//TODO: Check for exported genes/chromosomes first!
 	console.log ("Creating Chromosomes and Genes");
 	for (var i=0; i < genePopulation; i++) {
 		var gene = new Gene();
-		gene.dna.stockId = Math.random() * (1000 - 0) + 0;
-		gene.dna.sellThreshold = Math.random() * (1000 - 0) + 0;
-		gene.dna.buyThreshold = Math.random() * (1000 - 0) + 0;
-		gene.dna.trendLength = Math.random() * (1000 - 0) + 0;
+		gene.dna.stockId = Math.floor (Math.random() * 1000); //TODO: Need a real way to randomly choose a stock
+		gene.dna.sellThreshold = Math.floor (Math.random() * 90) - 90; //TODO: It would probably be wise to set a max of like 90 seeing how that is the MAX slope that could ever even occur...
+		gene.dna.buyThreshold = Math.floor (Math.random() * 90); //TODO: It would probably be wise to set a max of like 90 seeing how that is the MAX slope that could ever even occur...
+		gene.dna.trendLength = Math.floor (Math.random() * 1000); //TODO: I really have no clue what a good max for this should be... needs more thought
+		gene.dna.expression = Math.floor (Math.random() * 2);
+		console.log (gene);
 		genes.push (gene);
 	}
 	for (var i=0; i < chromosomePopulation; i++) {
-
+		var chromosome = new Chromosome();
+		chromosome.genes = genes; //TODO: don't do this
 	}
 }
 
@@ -25,6 +30,27 @@ function GetAction (stocks)
 	console.log ("Getting Genetic Actions");
 	var actions = [];
 	//Loop over Chromosomes and pass in stocks
+	for (var i=0; i < chromosomePopulation; i++) {
+		//Check fitness of chromosome
+		for (var j=0; j < chromosomes [i]; j++) {
+			//Check fitness of gene
+			//Get relevant stock, check conditions, if action is necessary - take it
+			var gene = chromosomes [i].genes [j];
+			if (!gene.expression) continue;
+			var stock = stocks [gene.dna.stockId],
+			trend = GetTrend (stock, gene.dna.trendLength),
+			action = new ai.Action();
+
+			if (trend > gene.dna.buyThreshold)
+				action.take = action.BUY;
+			else if (gene.qty && trend < sellThreshold)
+				action.take = action.SELL;
+			else
+				continue;
+			
+			actions.push (action);
+		}
+	}
 	//build up list of actions
 	return actions;
 }
@@ -66,12 +92,13 @@ function Gene()
 	this.fitnessScore;
 	this.prvTrend; // Not in use yet
 	this.dna = {
-		stockId : null,
-		sellThreshold : null,
-		buyThreshold : null,
-		trendLength : null,
-		relatives : null, // Not in use yet
-		relativeWeight : null // Not in use yet
+		stockId: null,
+		sellThreshold: null,
+		buyThreshold: null,
+		trendLength: null,
+		expression: null,
+		relatives: null, // Not in use yet
+		relativeWeight: null // Not in use yet
 	}
 }
 
@@ -94,11 +121,20 @@ function Mutate (victim)
 	// Find random genes and give random values a push
 }
 
+/** Programmer Beware. Maths ahead **/
+function GetTrend (stock, length)
+{
+	var relevantPoints = stock.transactions.slice (stock.transactions.length-length-1, stock.transactions.length);
+	//Perform Least Squares Linear Regression
+}
+/*
 function GetTrends (stocks, interestedStock, trendPoints)
 {
 
 }
+*/
 
 module.exports = {
+	Init: Init,
 	GetAction: GetAction
 }

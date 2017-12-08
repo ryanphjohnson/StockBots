@@ -15,5 +15,6 @@ function GetAction (stocks)
 }
 
 module.exports = {
+	Init: Init,
 	GetAction: GetAction
 }
