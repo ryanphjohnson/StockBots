@@ -7,10 +7,14 @@ function Init (config)
 	this.current = require ("../" + config.stocks.current);
 }
 
-function GetStocks()
+async function GetStocks()
 {
-	this.all.GetAllStocks();
-	this.current.GetCurrentStocks();
+	var x = await this.all.GetAllStocks();
+	for (var i in x) {
+		console.log (i);
+	}
+
+	//this.current.GetCurrentStocks();
 }
 
 function NotConfigured()

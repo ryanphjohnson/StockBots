@@ -3,7 +3,8 @@
 		"train" : {
 			"stocks" : {
 				"all" : "train/stocks-all.js",
-				"current" : "train/stocks-current.js"
+				"current" : "train/stocks-current.js",
+				"pool" : ["TSLA", "GOOG", "AAPL", "MSFT", "AMZN"]
 			},
 			"ai" : {
 				"get" : "train/action-get.js",

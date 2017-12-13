@@ -13,25 +13,29 @@ debug;
 
 stocks.Init (config);
 ai.Init (config);
+Runner();
 
 // Main Loop
-while (cont) {
-// 	Get Latest Tweets
-	twit.GetTweets();
-// 	Get stocks
-	stocks.GetStocks();
-// 	Magic
-	ai.Go (stocks);
-// 	Print Stats
-	stats.Print ();
-// 	Check if we need to exit loop
-	cont = Status();
-// 	Wait
-	if (cont)
-		timelord.wait();
-//	DEBUG
-	if (debug)
-		console.log (debug);
+async function Runner()
+{
+	while (cont) {
+	// 	Get Latest Tweets
+		twit.GetTweets();
+	// 	Get stocks
+		await stocks.GetStocks();
+	// 	Magic
+		ai.Go (stocks);
+	// 	Print Stats
+		stats.Print ();
+	// 	Check if we need to exit loop
+		cont = Status();
+	// 	Wait
+		if (cont)
+			timelord.wait();
+	//	DEBUG
+		if (debug)
+			console.log (debug);
+	}
 }
 
 // Check what mode we'll be running in
@@ -46,7 +50,7 @@ function GetMode (modes)
 	if (!mode)
 		process.exit (1);
 
-	console.log ('Trading in ' + require ('./utils/stats.js').GoodNews (mode.toUpperCase()) + ' mode');
+	console.log ('Trading in ' + require ('./utils/io.js').GoodNews (mode.toUpperCase()) + ' mode');
 	return mode;
 }
 
