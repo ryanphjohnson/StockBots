@@ -1,7 +1,7 @@
-const io = require 
+const io = require ("../utils/io.js");
 function Print () 
 {
-	console.log ('Super Cool Stats about ' + GoodNews ('$$$$') + ' and ' + BadNews ('Performance') + Reset);
+	console.log ('Super Cool Stats about ' + io.GoodNews ('$$$$') + ' and ' + io.BadNews ('Performance'));
 }
 
 
@@ -12,7 +12,5 @@ function Status ()
 
 module.exports = {
 	Print: Print,
-	Status: Status,
-	GoodNews: GoodNews,
-	BadNews: BadNews
+	Status: Status
 }

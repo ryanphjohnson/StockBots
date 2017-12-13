@@ -5,7 +5,7 @@ async function GetAllStocks()
 	return new Promise (MakeRequest);
 }
 
-function MakeRequest (resolve)
+function MakeRequest (resolve, reject)
 {
 	const https = require ("https");
 	var stock,
@@ -25,6 +25,7 @@ function MakeRequest (resolve)
 		});
 	}).on("error", (err) => {
 		console.log("Error: " + err.message);
+		reject();
 	});
 }
 
@@ -37,7 +38,7 @@ function CleanResponse (symbol, json)
 	for (var i in data) {
 		let transaction = data[i]['4. close'];
 		transactions.push (transaction);
-		console.log (transaction);
+		//console.log (transaction);
 	}
 
 	ret [symbol] = {};

@@ -23,8 +23,15 @@ function GetAIAction (stocks)
 	ga = genetics.GetAction (stocks);
 	ba = bayes.GetAction (stocks);
 	na = nn.GetAction (stocks);
-	actions = ga.concat (ba).concat (nn);
+	if (ga) actions = actions.concat (ga);
+	if (ba) actions = actions.concat (ba);
+	if (na) actions = actions.concat (na);
+	
 
+	console.log ("Actions: " + actions);
+	console.log ("GA: " + ga.length);
+	console.log ("BA: " + ba.length);
+	console.log ("NA: " + na.length);
 	return actions;
 }
 

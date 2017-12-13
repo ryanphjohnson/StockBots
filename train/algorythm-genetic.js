@@ -39,7 +39,7 @@ function GetAction (stocks)
 			if (!gene.expression) continue;
 			var stock = stocks [gene.dna.stockId],
 			trend = GetTrend (stock, gene.dna.trendLength),
-			action = new ai.Action();
+			action = new ai.Action(); // I honestly think this might not work how I think it works
 
 			if (trend > gene.dna.buyThreshold)
 				action.take = action.BUY;
@@ -48,6 +48,10 @@ function GetAction (stocks)
 			else
 				continue;
 			
+			console.log ("Stock=" + stock);
+			console.log ("Trend=" + trend);
+			console.log ("Action=" + action);
+
 			actions.push (action);
 		}
 	}
@@ -124,8 +128,11 @@ function Mutate (victim)
 /** Programmer Beware. Maths ahead **/
 function GetTrend (stock, length)
 {
+	var ret = 71; //TODO: Just for build/debug purposes. Totes Obvs
 	var relevantPoints = stock.transactions.slice (stock.transactions.length-length-1, stock.transactions.length);
 	//Perform Least Squares Linear Regression
+	
+	return ret;
 }
 /*
 function GetTrends (stocks, interestedStock, trendPoints)
