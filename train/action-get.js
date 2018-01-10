@@ -4,7 +4,7 @@ nn = require ("./algorythm-neural-network.js");
 
 function Init (config)
 {
-	genetics.Init (config);
+	genetics.Init ();
 	bayes.Init (config);
 	nn.Init (config);
 }
@@ -27,8 +27,6 @@ function GetAIAction (stocks)
 	if (ba) actions = actions.concat (ba);
 	if (na) actions = actions.concat (na);
 	
-
-	console.log ("Actions: " + actions);
 	console.log ("GA: " + ga.length);
 	console.log ("BA: " + ba.length);
 	console.log ("NA: " + na.length);

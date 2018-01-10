@@ -1,11 +1,11 @@
 function Average (numbers)
 {
-	var ret = 0;
+	var sum = 0;
 
 	for (var i in numbers) {
-		ret += i;
+		sum += numbers [i];
 	}
-	ret = ret / numbers.length;
+	var ret = sum / numbers.length;
 
 	return ret;
 }
@@ -20,8 +20,8 @@ function LeastSquares (xs, ys)
 	runSum = 0;
 
 	for (var i=0; i < xs.length; i++) {
-		rise = (x[i] - xAvg) * (y[i] - yAvg);
-		run = (x[i] - xAvg) * (x[i] - xAvg);
+		rise = (xs[i] - xAvg) * (ys[i] - yAvg);
+		run = (xs[i] - xAvg) * (xs[i] - xAvg);
 		riseSum += rise;
 		runSum += run;
 	}

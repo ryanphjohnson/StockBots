@@ -1,5 +1,6 @@
 this.all = {GetAllStocks: NotConfigured};
 this.current = {GetCurrentStocks: NotConfigured};
+this.stocks = [];
 
 function Init (config)
 {
@@ -9,12 +10,10 @@ function Init (config)
 
 async function GetStocks()
 {
-	var x = await this.all.GetAllStocks();
-	for (var i in x) {
+	this.stocks = await this.all.GetAllStocks();
+	for (var i in this.stocks) {
 		console.log (i);
 	}
-
-	//this.current.GetCurrentStocks();
 }
 
 function NotConfigured()
@@ -36,5 +35,6 @@ function Transaction ()
 
 module.exports = {
 	Init: Init,
-	GetStocks: GetStocks
+	GetStocks: GetStocks,
+	stocks: this.stocks
 }

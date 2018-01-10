@@ -10,9 +10,9 @@ function Init (config)
 	this.get.Init (config);
 }
 
-function Go()
+function Go (stocks)
 {
-	this.take.TakeAIAction (this.get.GetAIAction());
+	this.take.TakeAIAction (this.get.GetAIAction (stocks));
 }
 
 function NotConfigured()

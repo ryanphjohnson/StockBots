@@ -6,12 +6,12 @@ config = envs [mode],
 ai = require ('./utils/ai.js'), // MyHero ? MyHero : MyEnemy
 twit = require ('./utils/twitter.js'), // Hopefully a reliable source of information... let that sink in
 stats = require ('./utils/stats.js'), // Evidence for the authorities
-stocks = require ('./utils/stocks.js'), // List of all the stocks we're watching
+stockMgr = require ('./utils/stocks.js'), // List of all the stocks we're watching
 timelord = mode.timelord, // God of time and torture, killer of men and finances. Not to be triffled with
 cont = true,
-debug = GetModeList().train;
+debug = null;
 
-stocks.Init (config);
+stockMgr.Init (config);
 ai.Init (config);
 Runner();
 
@@ -22,11 +22,11 @@ async function Runner()
 	// 	Get Latest Tweets
 		twit.GetTweets();
 	// 	Get stocks
-		await stocks.GetStocks();
+		await stockMgr.GetStocks();
 	// 	Magic
-		ai.Go (stocks);
+		ai.Go (stockMgr.stocks);
 	// 	Print Stats
-		stats.Print ();
+		stats.Print();
 	// 	Check if we need to exit loop
 		cont = Status();
 	// 	Wait

@@ -36,14 +36,17 @@ function CleanResponse (symbol, json)
 	data = JSON.parse (json) ['Time Series (Daily)'];
 
 	for (var i in data) {
-		let transaction = data[i]['4. close'];
+		let transaction = parseInt (data[i]['4. close']);
 		transactions.push (transaction);
 		//console.log (transaction);
 	}
 
 	ret [symbol] = {};
-	ret [symbol]["stockId"] = symbol;
-	ret [symbol]["transactions"] = transactions;
+	ret [symbol] = {
+		"stockId": symbol,
+		"transactions": transactions,
+		"lastPrice": transactions [transactions.length-1]
+	};
 	return ret;
 }
 

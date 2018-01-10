@@ -1,8 +1,9 @@
 var chromosomePopulation = 1,
 genePopulation = 10,
 genes = [],
-chromosomes = []
-ai = require ("../utils/ai.js");
+chromosomes = [],
+ai = require ("../utils/ai.js"),
+math = require ("../utils/math.js");
 
 function Init()
 {
@@ -11,18 +12,19 @@ function Init()
 	console.log ("Creating Chromosomes and Genes");
 	for (var i=0; i < genePopulation; i++) {
 		var gene = new Gene();
-		gene.dna.stockId = Math.floor (Math.random() * 1000); //TODO: Need a real way to randomly choose a stock
-		gene.dna.sellThreshold = Math.floor (Math.random() * 90) - 90; //TODO: It would probably be wise to set a max of like 90 seeing how that is the MAX slope that could ever even occur...
-		gene.dna.buyThreshold = Math.floor (Math.random() * 90); //TODO: It would probably be wise to set a max of like 90 seeing how that is the MAX slope that could ever even occur...
-		gene.dna.trendLength = Math.floor (Math.random() * 1000); //TODO: I really have no clue what a good max for this should be... needs more thought
+		gene.dna.stockId = "MSFT"; //TODO: Need a real way to randomly choose a stock
+		gene.dna.sellThreshold = Math.random() * 2 - 1; //TODO: It would probably be wise to set a max of like 90 seeing how that is the MAX slope that could ever even occur...
+		gene.dna.buyThreshold = Math.random() * 2 - 1; //TODO: It would probably be wise to set a max of like 90 seeing how that is the MAX slope that could ever even occur...
+		gene.dna.trendLength = Math.floor (Math.random() * 100); //TODO: I really have no clue what a good max for this should be... needs more thought
 		gene.dna.expression = Math.floor (Math.random() * 2);
-		console.log (gene);
 		genes.push (gene);
 	}
 	for (var i=0; i < chromosomePopulation; i++) {
 		var chromosome = new Chromosome();
 		chromosome.genes = genes; //TODO: don't do this
+		chromosomes.push (chromosome);
 	}
+	console.log ("There are " + chromosomes.length + " chromosomes and " + genes.length + " genes");
 }
 
 function GetAction (stocks)
@@ -32,25 +34,25 @@ function GetAction (stocks)
 	//Loop over Chromosomes and pass in stocks
 	for (var i=0; i < chromosomePopulation; i++) {
 		//Check fitness of chromosome
-		for (var j=0; j < chromosomes [i]; j++) {
+		FitnessFunction (chromosomes [i], stocks);
+		for (var j=0; j < chromosomes[i].genes.length; j++) {
 			//Check fitness of gene
 			//Get relevant stock, check conditions, if action is necessary - take it
 			var gene = chromosomes [i].genes [j];
-			if (!gene.expression) continue;
+			if (!gene.dna.expression) continue;
 			var stock = stocks [gene.dna.stockId],
 			trend = GetTrend (stock, gene.dna.trendLength),
-			action = new ai.Action(); // I honestly think this might not work how I think it works
+			action = new ai.Action();
+			action.stockId = gene.dna.stockId;
+
+			console.log ("trend=" + trend + " buyThreshold=" + gene.dna.buyThreshold + " qty=" + gene.qty + " sellThreshold=" + gene.dna.sellThreshold);
 
 			if (trend > gene.dna.buyThreshold)
 				action.take = action.BUY;
-			else if (gene.qty && trend < sellThreshold)
+			else if (gene.qty && trend < gene.dna.sellThreshold)
 				action.take = action.SELL;
 			else
 				continue;
-			
-			console.log ("Stock=" + stock);
-			console.log ("Trend=" + trend);
-			console.log ("Action=" + action);
 
 			actions.push (action);
 		}
@@ -68,9 +70,24 @@ function CostFunction()
 
 // We want to make sure that any action taken makes us money
 // Make sure we're looking at networth
-function FitnessFunction()
+function FitnessFunction (chromosome, stocks)
 {
 // This is the function that will largely determine if this project is a success or failure... don't give up on this piece
+	var fitness = 0;
+	console.log ("Logging Fitness!");
+	//Loop over genes, see what they bought, and at what price, and what the current price is. Making money is good, losing money is bad
+	for (var i=0; i < chromosome.genes.length; i++) {
+		let geneFit = 0;
+
+		for (var j=0; j < chromosome.genes [i].purchasePrices.length; j++) {
+			geneFit += stocks [chromosome.genes [i].dna.stockId].lastPrice - chromosome.genes [i].purchasePrices [j];
+		}
+
+		chromosome.genes [i].fitnessScore = geneFit;
+		fitness += geneFit;
+	}
+
+	chromosome.fitnessScore = fitness;
 }
 
 // Here is where stuff starts getting cool
@@ -78,7 +95,7 @@ function FitnessFunction()
 function Chromosome()
 {
 	this.fitnessScore; // Quality of magic
-	this.genes; // Insert magic here
+	this.genes = []; // Insert magic here
 }
 
 // Desired Goals:
@@ -91,9 +108,9 @@ function Chromosome()
 // Give each gene a chance to hedge bets, with low confidence purchases or sells. We need a way to mark confidence level. This is probably difficult
 function Gene()
 {
-	this.qty;
-	this.purchasePrices;
-	this.fitnessScore;
+	this.qty = 0;
+	this.purchasePrices = [];
+	this.fitnessScore = 0;
 	this.prvTrend; // Not in use yet
 	this.dna = {
 		stockId: null,
@@ -128,9 +145,17 @@ function Mutate (victim)
 /** Programmer Beware. Maths ahead **/
 function GetTrend (stock, length)
 {
-	var ret = 71; //TODO: Just for build/debug purposes. Totes Obvs
-	var relevantPoints = stock.transactions.slice (stock.transactions.length-length-1, stock.transactions.length);
+	var ret = 0; //TODO: Just for build/debug purposes. Totes Obvs
+	console.log ("This stock has " + stock.transactions.length + " transactions and we want to grab " + length);
+	if (length > stock.transactions.length) length = stock.transactions.length;
+	var start = stock.transactions.length - length - 1;
+	console.log ("Ill be taking " + start + " til " + stock.transactions.length);
+	var relevantPoints = stock.transactions.slice (start, stock.transactions.length);
+	var dayIds = [];
+	for (var i = 0; i < relevantPoints.length; i++) dayIds.push (i+1);
+
 	//Perform Least Squares Linear Regression
+	ret = math.LeastSquares (dayIds, relevantPoints);
 	
 	return ret;
 }
