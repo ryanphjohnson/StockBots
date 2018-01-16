@@ -75,6 +75,7 @@ function FitnessFunction (chromosome, stocks)
 // This is the function that will largely determine if this project is a success or failure... don't give up on this piece
 	var fitness = 0;
 	console.log ("Logging Fitness!");
+	console.log (stocks);
 	//Loop over genes, see what they bought, and at what price, and what the current price is. Making money is good, losing money is bad
 	for (var i=0; i < chromosome.genes.length; i++) {
 		let geneFit = 0;

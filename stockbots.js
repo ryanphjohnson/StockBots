@@ -19,19 +19,18 @@ Runner();
 async function Runner()
 {
 	while (cont) {
+	// 	Wait
+	//	timelord.wait();
 	// 	Get Latest Tweets
 		twit.GetTweets();
 	// 	Get stocks
-		await stockMgr.GetStocks();
+		await stockMgr.UpdateStocks();
 	// 	Magic
-		ai.Go (stockMgr.stocks);
+		ai.Go (stockMgr.GetStocks());
 	// 	Print Stats
 		stats.Print();
 	// 	Check if we need to exit loop
 		cont = Status();
-	// 	Wait
-		if (cont)
-			timelord.wait();
 	//	DEBUG
 		if (debug)
 			console.log (debug);

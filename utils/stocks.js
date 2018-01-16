@@ -1,6 +1,6 @@
 this.all = {GetAllStocks: NotConfigured};
 this.current = {GetCurrentStocks: NotConfigured};
-this.stocks = [];
+var _stocks = [];
 
 function Init (config)
 {
@@ -8,17 +8,22 @@ function Init (config)
 	this.current = require ("../" + config.stocks.current);
 }
 
-async function GetStocks()
+async function UpdateStocks()
 {
-	this.stocks = await this.all.GetAllStocks();
-	for (var i in this.stocks) {
+	_stocks = await this.all.GetAllStocks();
+	for (var i in _stocks) {
 		console.log (i);
 	}
 }
 
+function GetStocks()
+{
+	return _stocks;
+}
+
 function NotConfigured()
 {
-	console.log (require ('./stats.js').BadNews ('Stocks were never configred!'));
+	console.log (require ('./io.js').BadNews ('Stocks were never configred!'));
 	process.exit (1);
 }
 
@@ -35,6 +40,6 @@ function Transaction ()
 
 module.exports = {
 	Init: Init,
-	GetStocks: GetStocks,
-	stocks: this.stocks
+	UpdateStocks: UpdateStocks,
+	GetStocks: GetStocks
 }
