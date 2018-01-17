@@ -16,7 +16,7 @@ function Init()
 		gene.dna.sellThreshold = Math.random() * 2 - 1; //TODO: It would probably be wise to set a max of like 90 seeing how that is the MAX slope that could ever even occur...
 		gene.dna.buyThreshold = Math.random() * 2 - 1; //TODO: It would probably be wise to set a max of like 90 seeing how that is the MAX slope that could ever even occur...
 		gene.dna.trendLength = Math.floor (Math.random() * 100); //TODO: I really have no clue what a good max for this should be... needs more thought
-		gene.dna.expression = Math.floor (Math.random() * 2);
+		gene.dna.expression = 1; //Math.floor (Math.random() * 2);
 		genes.push (gene);
 	}
 	for (var i=0; i < chromosomePopulation; i++) {
@@ -29,7 +29,6 @@ function Init()
 
 function GetAction (stocks)
 {
-	console.log ("Getting Genetic Actions");
 	var actions = [];
 	//Loop over Chromosomes and pass in stocks
 	for (var i=0; i < chromosomePopulation; i++) {
@@ -39,13 +38,13 @@ function GetAction (stocks)
 			//Check fitness of gene
 			//Get relevant stock, check conditions, if action is necessary - take it
 			var gene = chromosomes [i].genes [j];
-			if (!gene.dna.expression) continue;
+			if (!gene.dna.expression)
+				continue;
 			var stock = stocks [gene.dna.stockId],
 			trend = GetTrend (stock, gene.dna.trendLength),
 			action = new ai.Action();
 			action.stockId = gene.dna.stockId;
-
-			console.log ("trend=" + trend + " buyThreshold=" + gene.dna.buyThreshold + " qty=" + gene.qty + " sellThreshold=" + gene.dna.sellThreshold);
+			action.stockPrice = stock.lastPrice;
 
 			if (trend > gene.dna.buyThreshold)
 				action.take = action.BUY;
@@ -54,6 +53,7 @@ function GetAction (stocks)
 			else
 				continue;
 
+			//console.log ("trend=" + trend + " buyThreshold=" + gene.dna.buyThreshold + " qty=" + gene.qty + " sellThreshold=" + gene.dna.sellThreshold);
 			actions.push (action);
 		}
 	}
@@ -74,8 +74,6 @@ function FitnessFunction (chromosome, stocks)
 {
 // This is the function that will largely determine if this project is a success or failure... don't give up on this piece
 	var fitness = 0;
-	console.log ("Logging Fitness!");
-	console.log (stocks);
 	//Loop over genes, see what they bought, and at what price, and what the current price is. Making money is good, losing money is bad
 	for (var i=0; i < chromosome.genes.length; i++) {
 		let geneFit = 0;
@@ -147,10 +145,10 @@ function Mutate (victim)
 function GetTrend (stock, length)
 {
 	var ret = 0; //TODO: Just for build/debug purposes. Totes Obvs
-	console.log ("This stock has " + stock.transactions.length + " transactions and we want to grab " + length);
+	//console.log ("This stock has " + stock.transactions.length + " transactions and we want to grab " + length);
 	if (length > stock.transactions.length) length = stock.transactions.length;
-	var start = stock.transactions.length - length - 1;
-	console.log ("Ill be taking " + start + " til " + stock.transactions.length);
+	var start = stock.transactions.length - length;
+	//console.log ("Ill be taking " + start + " til " + stock.transactions.length);
 	var relevantPoints = stock.transactions.slice (start, stock.transactions.length);
 	var dayIds = [];
 	for (var i = 0; i < relevantPoints.length; i++) dayIds.push (i+1);
@@ -160,12 +158,6 @@ function GetTrend (stock, length)
 	
 	return ret;
 }
-/*
-function GetTrends (stocks, interestedStock, trendPoints)
-{
-
-}
-*/
 
 module.exports = {
 	Init: Init,

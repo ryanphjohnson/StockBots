@@ -7,7 +7,6 @@ function Init()
 
 function GetAction (stocks)
 {
-	console.log ("Getting Bayesian Actions");
 	var actions = [];
 	//Loop over Chromosomes and pass in stocks
 	//build up list of actions

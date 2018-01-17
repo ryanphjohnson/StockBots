@@ -1,22 +1,26 @@
-this.all = {GetAllStocks: NotConfigured};
-this.current = {GetCurrentStocks: NotConfigured};
+var all = {GetAllStocks: NotConfigured, ExtractStocks: NotConfigured};
+var current = {GetCurrentStocks: NotConfigured};
 var _stocks = [];
 
 function Init (config)
 {
-	this.all = require ("../" + config.stocks.all);
-	this.current = require ("../" + config.stocks.current);
+	all = require ("../" + config.stocks.all);
+	current = require ("../" + config.stocks.current);
 }
 
 async function UpdateStocks()
 {
-	_stocks = await this.all.GetAllStocks();
-	for (var i in _stocks) {
-		console.log (i);
-	}
+	if (_stocks.length)
+		return;
+	_stocks = await all.GetAllStocks ();
 }
 
-function GetStocks()
+function GetStocks (time)
+{
+	return all.ExtractStocks ("MSFT", _stocks, time);
+}
+
+function GetRawResponse ()
 {
 	return _stocks;
 }
@@ -41,5 +45,6 @@ function Transaction ()
 module.exports = {
 	Init: Init,
 	UpdateStocks: UpdateStocks,
-	GetStocks: GetStocks
+	GetStocks: GetStocks,
+	GetRawResponse: GetRawResponse
 }

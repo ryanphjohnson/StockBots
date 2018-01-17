@@ -11,7 +11,6 @@ function Init (config)
 
 function GetAIAction (stocks) 
 {
-	console.log ('TRAIN: Getting AI Action');
 	var genetics = require ("./algorythm-genetic.js"),
 	bayes = require ("./algorythm-bayesian-belief.js"),
 	nn = require ("./algorythm-neural-network.js"),
@@ -27,9 +26,7 @@ function GetAIAction (stocks)
 	if (ba) actions = actions.concat (ba);
 	if (na) actions = actions.concat (na);
 	
-	console.log ("GA: " + ga.length);
-	console.log ("BA: " + ba.length);
-	console.log ("NA: " + na.length);
+	console.log ("Genetic Actions: " + ga.length + " Bayesian Actions: " + ba.length + " Neural Actions: " + na.length);
 	return actions;
 }
 

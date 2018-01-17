@@ -7,34 +7,40 @@ ai = require ('./utils/ai.js'), // MyHero ? MyHero : MyEnemy
 twit = require ('./utils/twitter.js'), // Hopefully a reliable source of information... let that sink in
 stats = require ('./utils/stats.js'), // Evidence for the authorities
 stockMgr = require ('./utils/stocks.js'), // List of all the stocks we're watching
-timelord = mode.timelord, // God of time and torture, killer of men and finances. Not to be triffled with
+timelord = require (config.timelord), // God of time and torture, killer of men and finances. Not to be triffled with
 cont = true,
 debug = null;
 
-stockMgr.Init (config);
-ai.Init (config);
 Runner();
 
 // Main Loop
 async function Runner()
 {
+	stockMgr.Init (config);
+	await timelord.Init (stockMgr);
+	ai.Init (config);
+	console.log ();
+
 	while (cont) {
-	// 	Wait
-	//	timelord.wait();
 	// 	Get Latest Tweets
-		twit.GetTweets();
+		//twit.GetTweets();
 	// 	Get stocks
-		await stockMgr.UpdateStocks();
+		await stockMgr.UpdateStocks ();
 	// 	Magic
-		ai.Go (stockMgr.GetStocks());
-	// 	Print Stats
-		stats.Print();
+		ai.Go (stockMgr.GetStocks (timelord.Time ()));
 	// 	Check if we need to exit loop
-		cont = Status();
+		cont = Status (timelord);
+	// 	Wait
+		if (cont)
+			timelord.Wait();
 	//	DEBUG
 		if (debug)
 			console.log (debug);
 	}
+
+	console.log ();
+// 	Print Stats
+	stats.Print();
 }
 
 // Check what mode we'll be running in
@@ -66,15 +72,14 @@ function GetModeList ()
 				"get" : "train/action-get.js",
 				"take" : "train/action-take.js"
 			},
-			"timelord" : {"timelord" : "./train/wait.js"}
+			"timelord" : "./train/wait.js"
 		}
 	};
 
 	return modes;
 }
 
-function Status ()
+function Status (timelord)
 {
-	console.log ('Check exit condition');
-	return false;
+	return !timelord.EndOfTimes(); // I wonder if my shinanigans are beginning to affect code readability...
 }
