@@ -1,6 +1,6 @@
-var all = {GetAllStocks: NotConfigured, ExtractStocks: NotConfigured};
-var current = {GetCurrentStocks: NotConfigured};
-var _stocks = [];
+var all = {GetAllStocks: NotConfigured, ExtractStocks: NotConfigured},
+current = {GetCurrentStocks: NotConfigured},
+_stocks = [];
 
 function Init (config)
 {
@@ -33,18 +33,33 @@ function NotConfigured()
 
 function Stock ()
 {
-	this.transactions = [];
+	return {"transactions": []};
 }
 
 function Transaction ()
 {
-	this.time;
-	this.price;
+	var ret = {
+		"time": "",
+		"price": "",
+		"stockId": ""
+	};
+	return ret;
+}
+
+function Account ()
+{
+	var ret = {
+		"funds": 1000,
+		"transactions": []
+	}
+	return ret;
 }
 
 module.exports = {
 	Init: Init,
 	UpdateStocks: UpdateStocks,
+	Transaction: Transaction,
+	Account: Account,
 	GetStocks: GetStocks,
 	GetRawResponse: GetRawResponse
 }

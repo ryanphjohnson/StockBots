@@ -1,3 +1,5 @@
+var stockMgr = require ("../utils/stocks.js");
+
 async function GetAllStocks ()
 {
 	console. log ('TRAIN: Getting All Stocks');
@@ -47,7 +49,10 @@ function ExtractStocks (symbol, json, time)
 	}
 	// Clean up the values we actually care about
 	for (var i in data) {
-		let transaction = parseFloat (data[i]['4. close']);
+		let price = parseFloat (data[i]['4. close']);
+		let transaction = new stockMgr.Transaction();
+		transaction.time = i;
+		transaction.price = price;
 		transactions.push (transaction);
 		//console.log (transaction);
 	}
@@ -56,8 +61,9 @@ function ExtractStocks (symbol, json, time)
 	ret [symbol] = {
 		"stockId": symbol,
 		"transactions": transactions,
-		"lastPrice": transactions [0]
+		"lastPrice": transactions [0].price
 	};
+	console.log ("Done extracting stocks");
 	return ret;
 }
 

@@ -29,6 +29,7 @@ function Init()
 
 function GetAction (stocks)
 {
+	console.log ("Beginning to get actions");
 	var actions = [];
 	//Loop over Chromosomes and pass in stocks
 	for (var i=0; i < chromosomePopulation; i++) {
@@ -57,13 +58,13 @@ function GetAction (stocks)
 			actions.push (action);
 		}
 	}
-	//build up list of actions
+	console.log ("Ending to get actions");
 	return actions;
 }
 // This will help us prevent losing money
 // We want to make sure that any action taken prevents us from losing money
 // Make sure we're looking at networth
-function CostFunction()
+function CostFunction ()
 {
 // This is the function that will largely determine if this project is a success or failure... don't give up on this piece
 }
@@ -78,7 +79,7 @@ function FitnessFunction (chromosome, stocks)
 	for (var i=0; i < chromosome.genes.length; i++) {
 		let geneFit = 0;
 
-		for (var j=0; j < chromosome.genes [i].purchasePrices.length; j++) {
+		for (var j=0; j < chromosome.genes [i].account.transactions.length; j++) {
 			geneFit += stocks [chromosome.genes [i].dna.stockId].lastPrice - chromosome.genes [i].purchasePrices [j];
 		}
 
@@ -87,14 +88,18 @@ function FitnessFunction (chromosome, stocks)
 	}
 
 	chromosome.fitnessScore = fitness;
+	console.log ("Chromosome fitness score is: " + fitness);
 }
 
 // Here is where stuff starts getting cool
 // We need to think really hard about what values we care about
-function Chromosome()
+function Chromosome ()
 {
-	this.fitnessScore; // Quality of magic
-	this.genes = []; // Insert magic here
+	var ret = {
+		fitnessScore: "", // Quality of magic
+		genes: [] // Insert magic here
+	}
+	return ret;
 }
 
 // Desired Goals:
@@ -105,21 +110,23 @@ function Chromosome()
 // Branch off of solid foundation to increase odds of good returns
 // Allow peaking at other stocks as clues to what may be good signs or bad signs and give weight to each individual sign. Relatively easy
 // Give each gene a chance to hedge bets, with low confidence purchases or sells. We need a way to mark confidence level. This is probably difficult
-function Gene()
+function Gene ()
 {
-	this.qty = 0;
-	this.purchasePrices = [];
-	this.fitnessScore = 0;
-	this.prvTrend; // Not in use yet
-	this.dna = {
-		stockId: null,
-		sellThreshold: null,
-		buyThreshold: null,
-		trendLength: null,
-		expression: null,
-		relatives: null, // Not in use yet
-		relativeWeight: null // Not in use yet
-	}
+	var ret = {
+		account: new stockMgr.Account (),
+		fitnessScore: 0,
+		prvTrend: "",
+		dna: {
+			stockId: null,
+			sellThreshold: null,
+			buyThreshold: null,
+			trendLength: null,
+			expression: null,
+			relatives: null, // Not in use yet
+			relativeWeight: null // Not in use yet
+		}
+	};
+	return ret;
 }
 
 // Here we'll play dr frankenstein with our precious chromosomes
@@ -151,10 +158,14 @@ function GetTrend (stock, length)
 	//console.log ("Ill be taking " + start + " til " + stock.transactions.length);
 	var relevantPoints = stock.transactions.slice (start, stock.transactions.length);
 	var dayIds = [];
-	for (var i = 0; i < relevantPoints.length; i++) dayIds.push (i+1);
+	var pricePoints = [];
+	for (var i = 0; i < relevantPoints.length; i++) {
+		dayIds.push (i+1);
+		pricePoints.push (relevantPoints [i].price);
+	}
 
 	//Perform Least Squares Linear Regression
-	ret = math.LeastSquares (dayIds, relevantPoints);
+	ret = math.LeastSquares (dayIds, pricePoints);
 	
 	return ret;
 }

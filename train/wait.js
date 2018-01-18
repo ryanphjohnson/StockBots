@@ -1,5 +1,5 @@
 var times = [],
-    iterator = 0;
+iterator = 0;
 
 async function Init (stockMgr)
 {
@@ -12,6 +12,7 @@ async function Init (stockMgr)
 	}
 	iterator = times.length - 78; // Completely arbitrary
 }
+
 function Wait() {
 	//console.log ('TRAIN: Waiting...');
 }

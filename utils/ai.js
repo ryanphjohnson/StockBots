@@ -22,11 +22,15 @@ function NotConfigured()
 
 function Action()
 {
-	this.stockId;
-	this.stockPrice;
-	this.BUY = "BUY";
-	this.SELL = "SELL";
-	this.take;
+	var ret = {
+		"stockId": "",
+		"stockPrice": "",
+		"BUY": "BUY",
+		"SELL": "SELL",
+		"take": ""
+	};
+
+	return ret;
 }
 
 module.exports = {
