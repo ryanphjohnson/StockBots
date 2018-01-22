@@ -37,7 +37,6 @@ function ExtractStocks (symbol, json, time)
 	transactions = [],
 	data = JSON.parse (json) ['Time Series (Daily)'];
 	//console.log (json);
-	console.log ("Time is " + time);
 	var morbidCounter = 0;
 
 	// Chop off all the values that we're going to pretend don't exist right now
@@ -60,10 +59,8 @@ function ExtractStocks (symbol, json, time)
 	ret [symbol] = {};
 	ret [symbol] = {
 		"stockId": symbol,
-		"transactions": transactions,
-		"lastPrice": transactions [0].price
+		"transactions": transactions
 	};
-	console.log ("Done extracting stocks");
 	return ret;
 }
 

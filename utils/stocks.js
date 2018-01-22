@@ -41,7 +41,8 @@ function Transaction ()
 	var ret = {
 		"time": "",
 		"price": "",
-		"stockId": ""
+		"stockId": "",
+		"action": ""
 	};
 	return ret;
 }

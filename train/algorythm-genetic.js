@@ -29,7 +29,6 @@ function Init()
 
 function GetAction (stocks)
 {
-	console.log ("Beginning to get actions");
 	var actions = [];
 	//Loop over Chromosomes and pass in stocks
 	for (var i=0; i < chromosomePopulation; i++) {
@@ -44,8 +43,6 @@ function GetAction (stocks)
 			var stock = stocks [gene.dna.stockId],
 			trend = GetTrend (stock, gene.dna.trendLength),
 			action = new ai.Action();
-			action.stockId = gene.dna.stockId;
-			action.stockPrice = stock.lastPrice;
 
 			if (trend > gene.dna.buyThreshold)
 				action.take = action.BUY;
@@ -54,11 +51,14 @@ function GetAction (stocks)
 			else
 				continue;
 
+			action.stockId = gene.dna.stockId;
+			action.account = gene.account;
+			action.stockPrice = stock.transactions [0].price;
+			action.time = stock.transactions [0].time;
 			//console.log ("trend=" + trend + " buyThreshold=" + gene.dna.buyThreshold + " qty=" + gene.qty + " sellThreshold=" + gene.dna.sellThreshold);
 			actions.push (action);
 		}
 	}
-	console.log ("Ending to get actions");
 	return actions;
 }
 // This will help us prevent losing money
@@ -80,7 +80,7 @@ function FitnessFunction (chromosome, stocks)
 		let geneFit = 0;
 
 		for (var j=0; j < chromosome.genes [i].account.transactions.length; j++) {
-			geneFit += stocks [chromosome.genes [i].dna.stockId].lastPrice - chromosome.genes [i].purchasePrices [j];
+			geneFit += stocks [chromosome.genes [i].dna.stockId].transactions [0].price - chromosome.genes [i].account.transactions [j].price;
 		}
 
 		chromosome.genes [i].fitnessScore = geneFit;

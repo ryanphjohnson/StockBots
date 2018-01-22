@@ -25,9 +25,11 @@ function Action()
 	var ret = {
 		"stockId": "",
 		"stockPrice": "",
+		"time": "",
 		"BUY": "BUY",
 		"SELL": "SELL",
-		"take": ""
+		"take": "",
+		"account": ""
 	};
 
 	return ret;
