@@ -29,7 +29,7 @@ async function Runner()
 	// 	Magic
 		ai.Go (stockMgr.GetStocks (timelord.Time ()));
 	// 	Check if we need to exit loop
-		cont = Status (timelord);
+		cont = Status (ai, timelord);
 	// 	Wait
 		if (cont)
 			timelord.Wait();
@@ -40,7 +40,7 @@ async function Runner()
 
 	console.log ();
 // 	Print Stats
-	stats.Print();
+	stats.Print ();
 }
 
 // Check what mode we'll be running in
@@ -79,7 +79,7 @@ function GetModeList ()
 	return modes;
 }
 
-function Status (timelord)
+function Status (ai, timelord)
 {
 	return !timelord.EndOfTimes(); // I wonder if my shinanigans are beginning to affect code readability...
 }

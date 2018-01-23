@@ -1,4 +1,5 @@
 const io = require ("../utils/io.js");
+
 function Print () 
 {
 	console.log ('Super Cool Stats about ' + io.GoodNews ('$$$$') + ' and ' + io.BadNews ('Performance'));
