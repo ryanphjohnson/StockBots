@@ -34,7 +34,7 @@ function GetAction (stocks)
 	for (var i=0; i < chromosomePopulation; i++) {
 		//Check fitness of chromosome
 		FitnessFunction (chromosomes [i], stocks);
-		for (var j=0; j < chromosomes[i].genes.length; j++) {
+		for (var j=0; j < chromosomes [i].genes.length; j++) {
 			//Check fitness of gene
 			//Get relevant stock, check conditions, if action is necessary - take it
 			var gene = chromosomes [i].genes [j];
@@ -46,20 +46,50 @@ function GetAction (stocks)
 
 			if (trend > gene.dna.buyThreshold)
 				action.take = action.BUY;
-			else if (gene.qty && trend < gene.dna.sellThreshold)
+			else if (gene.account.transactions.length && trend < gene.dna.sellThreshold)
 				action.take = action.SELL;
 			else
 				continue;
+
+			if (action.take == "SELL")
+				console.log ("I'm actually going to sell!");
 
 			action.stockId = gene.dna.stockId;
 			action.account = gene.account;
 			action.stockPrice = stock.transactions [0].price;
 			action.time = stock.transactions [0].time;
-			//console.log ("trend=" + trend + " buyThreshold=" + gene.dna.buyThreshold + " qty=" + gene.qty + " sellThreshold=" + gene.dna.sellThreshold);
 			actions.push (action);
 		}
 	}
 	return actions;
+}
+
+function Regenerate ()
+{
+	// Sort by the top 5% of genes, and mutate them to fill out the other 95%
+	console.log();
+	for (var i=0; i < chromosomePopulation; i++) {
+		chromosomes [i].genes.sort (function (a, b) {
+			return b.fitnessScore - a.fitnessScore;
+		});
+	}
+	var winners = Math.ceil (genePopulation * .05);
+	losers = genePopulation - winners;
+	//console.log ("Winning gene looked like this: " + JSON.stringify (chromosomes [0].genes [0]));
+
+	for (var i=0; i < chromosomePopulation; i++) {
+		for (var j=0; j < chromosomes [i].genes.length; j++) {
+			//if (chromosomes [i].genes [j].fitnessScore > 0)
+			//	console.log ("We have a winner!");
+	//			console.log ("Gene " + j + " was a winner! Its score was " chromosomes [i].genes [j].fitnessScore);
+			let topGene = chromosomes [i].genes [0];
+			chromosomes [i].genes [j].account = [];
+			chromosomes [i].genes [j].fitnessScore = 0;
+			//chromosomes [i].genes [j] = Mutate (topGene);
+			chromosomes [i].genes [j] = MateGenes (topGene, chromosomes [i].genes [j]);
+			//console.log ("Gene is " + JSON.stringify (chromosomes [i].genes [j]));
+		}
+	}
 }
 // This will help us prevent losing money
 // We want to make sure that any action taken prevents us from losing money
@@ -80,7 +110,7 @@ function FitnessFunction (chromosome, stocks)
 		let geneFit = 0;
 
 		for (var j=0; j < chromosome.genes [i].account.transactions.length; j++) {
-			geneFit += stocks [chromosome.genes [i].dna.stockId].transactions [0].price - chromosome.genes [i].account.transactions [j].price;
+			geneFit += stocks [chromosome.genes [i].dna.stockId].transactions [0].price - chromosome.genes [i].account.transactions [j].price; //+ chromosome.genes [i].account.funds;
 		}
 
 		chromosome.genes [i].fitnessScore = geneFit;
@@ -138,7 +168,15 @@ function MateChromosomes (mom, dad)
 
 function MateGenes (mom, dad)
 {
+	var gene = new Gene();
 
+	gene.dna.expression = 1;
+	gene.dna.stockId = mom.dna.stockId;
+	gene.dna.sellThreshold = (mom.dna.sellThreshold + dad.dna.sellThreshold) / 2
+	gene.dna.buyThreshold = (mom.dna.buyThreshold + dad.dna.buyThreshold) / 2
+	gene.dna.trendLength = (mom.dna.trendLength + dad.dna.trendLength) / 2
+
+	return gene;
 }
 
 // Radiation is rad
@@ -146,6 +184,27 @@ function MateGenes (mom, dad)
 function Mutate (victim)
 {
 	// Find random genes and give random values a push
+	var gene = new Gene ();
+	var mutation = Math.floor (Math.random () * 3);
+	gene.dna.expression = 1;
+	gene.dna.stockId = victim.dna.stockId;
+	gene.dna.sellThreshold = victim.dna.sellThreshold;
+	gene.dna.buyThreshold = victim.dna.buyThreshold;
+	gene.dna.trendLength = victim.dna.trendLength;
+
+	switch (mutation) {
+		case 0:
+			gene.dna.sellThreshold = Math.random() * 2 - 1;
+			break;
+		case 1:
+			gene.dna.buyThreshold = Math.random() * 2 - 1;
+			break;
+		case 2:
+			gene.dna.trendLength = Math.floor (Math.random() * 100);
+			break;
+	}
+
+	return gene;
 }
 
 /** Programmer Beware. Maths ahead **/
@@ -172,5 +231,6 @@ function GetTrend (stock, length)
 
 module.exports = {
 	Init: Init,
-	GetAction: GetAction
+	GetAction: GetAction,
+	Regenerate: Regenerate
 }

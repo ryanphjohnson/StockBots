@@ -81,5 +81,13 @@ function GetModeList ()
 
 function Status (ai, timelord)
 {
-	return !timelord.EndOfTimes(); // I wonder if my shinanigans are beginning to affect code readability...
+	if (timelord.EndOfTimes ()) {
+		if (ai.Regenerate ()) {
+			timelord.Restart ();
+		} else {
+			return false;
+		}
+	}
+
+	return true;
 }

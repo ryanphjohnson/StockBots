@@ -10,7 +10,7 @@ async function Init (stockMgr)
 	for (var time in data) {
 		times.push (time);
 	}
-	iterator = times.length - 78; // Completely arbitrary
+	Restart ();
 }
 
 function Wait() {
@@ -28,9 +28,15 @@ function EndOfTimes ()
 	return !iterator;
 }
 
+function Restart ()
+{
+	iterator = times.length - 78; // Completely arbitrary
+}
+
 module.exports = {
 	Init: Init,
 	Wait: Wait,
 	Time: Time,
-	EndOfTimes: EndOfTimes
+	EndOfTimes: EndOfTimes,
+	Restart: Restart
 }

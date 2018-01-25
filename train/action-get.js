@@ -30,7 +30,13 @@ function GetAIAction (stocks)
 	return actions;
 }
 
+function Regenerate ()
+{
+	genetics.Regenerate ();
+}
+
 module.exports = {
 	Init: Init,
-	GetAIAction: GetAIAction
+	GetAIAction: GetAIAction,
+	Regenerate: Regenerate
 }
