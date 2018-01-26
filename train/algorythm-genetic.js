@@ -3,6 +3,7 @@ genePopulation = 10,
 genes = [],
 chromosomes = [],
 ai = require ("../utils/ai.js"),
+io = require ("../utils/io.js"),
 math = require ("../utils/math.js");
 
 function Init()
@@ -13,8 +14,8 @@ function Init()
 	for (var i=0; i < genePopulation; i++) {
 		var gene = new Gene();
 		gene.dna.stockId = "MSFT"; //TODO: Need a real way to randomly choose a stock
-		gene.dna.sellThreshold = Math.random() * 2 - 1; //TODO: It would probably be wise to set a max of like 90 seeing how that is the MAX slope that could ever even occur...
-		gene.dna.buyThreshold = Math.random() * 2 - 1; //TODO: It would probably be wise to set a max of like 90 seeing how that is the MAX slope that could ever even occur...
+		gene.dna.buyThreshold = Math.random() - .5; //TODO: It would probably be wise to set a max of like 90 seeing how that is the MAX slope that could ever even occur...
+		gene.dna.sellThreshold = gene.dna.buyThreshold - .001; //TODO: It would probably be wise to set a max of like 90 seeing how that is the MAX slope that could ever even occur...
 		gene.dna.trendLength = Math.floor (Math.random() * 100); //TODO: I really have no clue what a good max for this should be... needs more thought
 		gene.dna.expression = 1; //Math.floor (Math.random() * 2);
 		genes.push (gene);
@@ -38,11 +39,15 @@ function GetAction (stocks)
 			//Check fitness of gene
 			//Get relevant stock, check conditions, if action is necessary - take it
 			var gene = chromosomes [i].genes [j];
-			if (!gene.dna.expression)
-				continue;
+			//if (!gene.dna.expression)
+			//	continue;
 			var stock = stocks [gene.dna.stockId],
 			trend = GetTrend (stock, gene.dna.trendLength),
 			action = new ai.Action();
+			//var d = (!!gene.account.transactions.length) && trend < gene.dna.sellThreshold;
+			//var d1 = (!!gene.account.transactions.length);
+			//var d2 = trend < gene.dna.sellThreshold;
+			//console.log ("DEBUG: " + d + " d1: " + d1 + " d2: " + d2 + " len: " + gene.account.transactions.length + " trend: " + trend + " sell: " + gene.dna.sellThreshold + " buy: " + gene.dna.buyThreshold);
 
 			if (trend > gene.dna.buyThreshold)
 				action.take = action.BUY;
@@ -52,7 +57,7 @@ function GetAction (stocks)
 				continue;
 
 			if (action.take == "SELL")
-				console.log ("I'm actually going to sell!");
+				console.log (io.GoodNews ("I'm actually going to sell!"));
 
 			action.stockId = gene.dna.stockId;
 			action.account = gene.account;
@@ -68,6 +73,7 @@ function Regenerate ()
 {
 	// Sort by the top 5% of genes, and mutate them to fill out the other 95%
 	console.log();
+	console.log ("Chromosome fitness score is: " + chromosomes [0].fitnessScore);
 	for (var i=0; i < chromosomePopulation; i++) {
 		chromosomes [i].genes.sort (function (a, b) {
 			return b.fitnessScore - a.fitnessScore;
@@ -110,7 +116,7 @@ function FitnessFunction (chromosome, stocks)
 		let geneFit = 0;
 
 		for (var j=0; j < chromosome.genes [i].account.transactions.length; j++) {
-			geneFit += stocks [chromosome.genes [i].dna.stockId].transactions [0].price - chromosome.genes [i].account.transactions [j].price; //+ chromosome.genes [i].account.funds;
+			geneFit += stocks [chromosome.genes [i].dna.stockId].transactions [0].price - chromosome.genes [i].account.transactions [j].price + chromosome.genes [i].account.funds;
 		}
 
 		chromosome.genes [i].fitnessScore = geneFit;
@@ -118,7 +124,6 @@ function FitnessFunction (chromosome, stocks)
 	}
 
 	chromosome.fitnessScore = fitness;
-	console.log ("Chromosome fitness score is: " + fitness);
 }
 
 // Here is where stuff starts getting cool
@@ -194,10 +199,10 @@ function Mutate (victim)
 
 	switch (mutation) {
 		case 0:
-			gene.dna.sellThreshold = Math.random() * 2 - 1;
+			gene.dna.sellThreshold = Math.random() - 1;
 			break;
 		case 1:
-			gene.dna.buyThreshold = Math.random() * 2 - 1;
+			gene.dna.buyThreshold = Math.random();
 			break;
 		case 2:
 			gene.dna.trendLength = Math.floor (Math.random() * 100);

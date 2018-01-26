@@ -9,7 +9,7 @@ stats = require ('./utils/stats.js'), // Evidence for the authorities
 stockMgr = require ('./utils/stocks.js'), // List of all the stocks we're watching
 timelord = require (config.timelord), // God of time and torture, killer of men and finances. Not to be triffled with
 cont = true,
-debug = null;
+debug = 0;
 
 Runner();
 
@@ -36,6 +36,7 @@ async function Runner()
 	//	DEBUG
 		if (debug)
 			console.log (debug);
+		//debug++;
 	}
 
 	console.log ();

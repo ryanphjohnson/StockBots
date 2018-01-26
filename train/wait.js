@@ -5,11 +5,12 @@ async function Init (stockMgr)
 {
 	await stockMgr.UpdateStocks();
 	//stockMgr.GetStocks (new Date().toLocaleDateString());
-	var json = stockMgr.GetRawResponse ();
-	var data = JSON.parse (json) ['Time Series (Daily)'];
+	var resp = stockMgr.GetRawResponse ();
+	var data = resp ['MSFT'].transactions ;
 	for (var time in data) {
 		times.push (time);
 	}
+	console.log ("We have data for " + times.length + " days");
 	Restart ();
 }
 
@@ -20,7 +21,7 @@ function Wait() {
 function Time()
 {
 	//console.log ("Getting time");
-	return times [--iterator];
+	return --iterator;
 }
 
 function EndOfTimes ()

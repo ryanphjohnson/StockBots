@@ -12,7 +12,8 @@ async function GetAllStocks ()
 
 		//https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + symbol + "&apikey=demo
 		//https.get ("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&outputsize=full&symbol=" + symbol + "&apikey=demo", (resp) => {
-		https.get ("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + symbol + "&apikey=demo", (resp) => {
+		https.get ("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&outputsize=full&symbol=" + symbol + "&apikey=D1EI5P94OS1MCOUJ", (resp) => {
+		//https.get ("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&outputsize=compact&symbol=" + symbol + "&apikey=D1EI5P94OS1MCOUJ", (resp) => {
 			let data = "";
 			// A chunk of data has been recieved.
 			resp.on("data", (chunk) => {
@@ -22,7 +23,7 @@ async function GetAllStocks ()
 			resp.on("end", () => {
 				//console.log (data);
 				//stock = ExtractStocks (symbol, data);
-				resolve (data);
+				resolve (JSON.parse (data));
 			});
 		}).on("error", (err) => {
 			console.log("Error: " + err.message);
@@ -31,25 +32,16 @@ async function GetAllStocks ()
 	})
 }
 
-function ExtractStocks (symbol, json, time)
+function ExtractStocks (symbol, resp)
 {
+	console.log ("Beggining extraction");
 	var ret = {},
 	transactions = [],
-	data = JSON.parse (json) ['Time Series (Daily)'];
-	//console.log (json);
-	var morbidCounter = 0;
+	data = resp ['Time Series (Daily)'];
 
-	// Chop off all the values that we're going to pretend don't exist right now
-	for (var i in data) {
-		if (i == time)
-			break;
-		morbidCounter++;
-		delete data[i];
-	}
-	// Clean up the values we actually care about
 	for (var i in data) {
 		let price = parseFloat (data[i]['4. close']);
-		let transaction = new stockMgr.Transaction();
+		let transaction = new stockMgr.Transaction ();
 		transaction.time = i;
 		transaction.price = price;
 		transactions.push (transaction);

@@ -26,7 +26,7 @@ function GetAIAction (stocks)
 	if (ba) actions = actions.concat (ba);
 	if (na) actions = actions.concat (na);
 	
-	console.log ("Genetic Actions: " + ga.length + " Bayesian Actions: " + ba.length + " Neural Actions: " + na.length);
+	//console.log ("Genetic Actions: " + ga.length + " Bayesian Actions: " + ba.length + " Neural Actions: " + na.length);
 	return actions;
 }
 

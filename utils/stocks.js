@@ -1,6 +1,7 @@
 var all = {GetAllStocks: NotConfigured, ExtractStocks: NotConfigured},
 current = {GetCurrentStocks: NotConfigured},
-_stocks = [];
+_stocks = null,
+_iterator = 0;
 
 function Init (config)
 {
@@ -10,14 +11,22 @@ function Init (config)
 
 async function UpdateStocks()
 {
-	if (_stocks.length)
+	if (_stocks != null)
 		return;
-	_stocks = await all.GetAllStocks ();
+	var resp = await all.GetAllStocks ();
+	_stocks = all.ExtractStocks ("MSFT", resp);
+	_iterator = _stocks ["MSFT"].transactions.length - 78; // totes arbitrary
+	//call extract here and save it to _stocks
 }
 
 function GetStocks (time)
 {
-	return all.ExtractStocks ("MSFT", _stocks, time);
+	// Splice the transactions to the _iterator and return it
+	//return all.ExtractStocks ("MSFT", _stocks, time);
+	var ret = [];
+	ret ["MSFT"] = new Stock();
+	ret ["MSFT"].transactions = _stocks ["MSFT"].transactions.slice (time, _stocks ["MSFT"].transactions.length);
+	return ret;
 }
 
 function GetRawResponse ()
