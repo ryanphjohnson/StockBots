@@ -47,6 +47,7 @@ function ExtractStocks (symbol, resp)
 		transactions.push (transaction);
 		//console.log (transaction);
 	}
+	//if (data.length > 100) data.shift();
 
 	ret [symbol] = {};
 	ret [symbol] = {

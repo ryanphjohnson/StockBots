@@ -23,9 +23,10 @@ function GetStocks (time)
 {
 	// Splice the transactions to the _iterator and return it
 	//return all.ExtractStocks ("MSFT", _stocks, time);
-	var ret = [];
+	var ret = [],
+	end = _stocks ["MSFT"].transactions.length > 100 ? 100 : _stocks ["MSFT"].transactions.length;
 	ret ["MSFT"] = new Stock();
-	ret ["MSFT"].transactions = _stocks ["MSFT"].transactions.slice (time, _stocks ["MSFT"].transactions.length);
+	ret ["MSFT"].transactions = _stocks ["MSFT"].transactions.slice (time, end);
 	return ret;
 }
 

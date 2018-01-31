@@ -1,5 +1,5 @@
 var chromosomePopulation = 1,
-genePopulation = 10,
+genePopulation = 300,
 genes = [],
 chromosomes = [],
 ai = require ("../utils/ai.js"),
@@ -56,8 +56,8 @@ function GetAction (stocks)
 			else
 				continue;
 
-			if (action.take == "SELL")
-				console.log (io.GoodNews ("I'm actually going to sell!"));
+			//if (action.take == "SELL")
+			//	console.log (io.GoodNews ("I'm actually going to sell!"));
 
 			action.stockId = gene.dna.stockId;
 			action.account = gene.account;
@@ -94,6 +94,11 @@ function Regenerate ()
 			//chromosomes [i].genes [j] = Mutate (topGene);
 			chromosomes [i].genes [j] = MateGenes (topGene, chromosomes [i].genes [j]);
 			//console.log ("Gene is " + JSON.stringify (chromosomes [i].genes [j]));
+		}
+
+		// Mutate the bottom group, they were useless anyways
+		for (var j = chromosomes [i].genes.length/2; j < chromosomes [i].genes.length; j++) {
+			chromosomes [i].genes [j] = Mutate (chromosomes [i].genes [j]);
 		}
 	}
 }
@@ -199,10 +204,10 @@ function Mutate (victim)
 
 	switch (mutation) {
 		case 0:
-			gene.dna.sellThreshold = Math.random() - 1;
+			gene.dna.sellThreshold = Math.random() - .5;
 			break;
 		case 1:
-			gene.dna.buyThreshold = Math.random();
+			gene.dna.buyThreshold = Math.random() - .5;
 			break;
 		case 2:
 			gene.dna.trendLength = Math.floor (Math.random() * 100);
